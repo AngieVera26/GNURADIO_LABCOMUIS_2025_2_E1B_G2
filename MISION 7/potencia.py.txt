@@ -1,0 +1,26 @@
+import numpy as np
+from gnuradio import gr
+
+class blk(gr.sync_block):  # 'blk' puede tener cualquier nombre
+    """Bloque que calcula la potencia promedio de una ventana compleja"""
+
+    def __init__(self):
+        gr.sync_block.__init__(
+            self,
+            name='Potencia promedio',        # Nombre del bloque
+            in_sig=[(np.complex64,)],        # Entrada: vector complejo
+            out_sig=[np.float32],             # Salida: un escalar float
+        )
+
+    def work(self, input_items, output_items):
+        # input_items[0] es el vector complejo
+        x = input_items[0]
+
+        # Calcular la potencia promedio
+        power = np.mean(np.abs(x)**2)
+
+        # Escribir el resultado en la salida
+        output_items[0][0] = power
+
+        # Solo un valor de salida por ejecución
+        return 1

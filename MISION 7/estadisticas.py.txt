@@ -1,0 +1,27 @@
+import numpy as np
+from gnuradio import gr
+
+class blk(gr.sync_block):
+    def __init__(self):
+        gr.sync_block.__init__(
+            self,
+            name='Estadísticas de Amplitud',
+            in_sig=[(np.complex64, 1024)],   # <-- entrada vectorial de 1024 muestras (puedes ajustar el tamaño)
+            out_sig=[np.float32, np.float32]  # dos salidas escalares
+        )
+
+    def work(self, input_items, output_items):
+        x = input_items[0][0]  # vector de entrada (una ventana)
+
+        # Calcular magnitudes
+        magnitudes = np.abs(x)
+
+        # Calcular media y desviación estándar
+        media = np.mean(magnitudes)
+        desviacion = np.std(magnitudes)
+
+        # Asignar resultados a las salidas
+        output_items[0][0] = media
+        output_items[1][0] = desviacion
+
+        return 1  # generamos un solo valor por ventana
